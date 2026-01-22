@@ -1,0 +1,429 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+
+.app-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Left Panel - Pomodoro Timer */
+.left-panel {
+    flex: 0 0 40%;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+.timer-container {
+    text-align: center;
+    width: 100%;
+    max-width: 350px;
+}
+
+.tomato-illustration {
+    margin-bottom: 20px;
+}
+
+.tomato-svg {
+    width: 120px;
+    height: 120px;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.timer-display {
+    font-size: 72px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-family: 'Courier New', monospace;
+}
+
+.timer-mode {
+    font-size: 18px;
+    color: #7f8c8d;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.timer-mode.work {
+    color: #e74c3c;
+}
+
+.timer-mode.rest {
+    color: #27ae60;
+}
+
+.timer-settings {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 30px;
+}
+
+.setting-group {
+    text-align: center;
+}
+
+.setting-group label {
+    display: block;
+    font-size: 14px;
+    color: #7f8c8d;
+    margin-bottom: 8px;
+}
+
+.setting-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    color: #2c3e50;
+}
+
+.setting-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: #e74c3c;
+    color: white;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background 0.2s;
+}
+
+.setting-btn:hover {
+    background: #c0392b;
+}
+
+.timer-controls {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.timer-btn {
+    padding: 12px 30px;
+    font-size: 16px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.timer-btn:first-child {
+    background: #e74c3c;
+    color: white;
+}
+
+.timer-btn:first-child:hover {
+    background: #c0392b;
+}
+
+.timer-btn:last-child {
+    background: #ecf0f1;
+    color: #2c3e50;
+}
+
+.timer-btn:last-child:hover {
+    background: #bdc3c7;
+}
+
+.current-task-display {
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    color: #7f8c8d;
+    font-size: 14px;
+}
+
+.current-task-display.active {
+    background: #e8f5e9;
+    color: #27ae60;
+    font-weight: 500;
+}
+
+/* Right Panel - To-Do List */
+.right-panel {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+}
+
+.todo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.todo-header h2 {
+    color: white;
+    font-size: 28px;
+}
+
+.add-task-btn {
+    padding: 12px 24px;
+    font-size: 16px;
+    background: white;
+    color: #667eea;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.add-task-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Add Task Menu */
+.add-task-menu {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+}
+
+.add-task-menu.open {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.menu-content {
+    position: relative;
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 450px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.menu-content h3 {
+    color: #2c3e50;
+    margin-bottom: 25px;
+    font-size: 24px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    color: #2c3e50;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #ecf0f1;
+    border-radius: 10px;
+    font-size: 15px;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.add-to-list-btn {
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.add-to-list-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+/* Task List */
+.task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Task Box */
+.task-box {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+    transition: all 0.3s;
+}
+
+.task-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.task-box.active {
+    border: 3px solid #27ae60;
+    background: #f8fff8;
+}
+
+.task-priority-badge {
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.task-name {
+    font-size: 20px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    margin-top: 5px;
+}
+
+.task-due-date {
+    font-size: 14px;
+    color: #e74c3c;
+    margin-bottom: 8px;
+}
+
+.task-due-date::before {
+    content: "Due: ";
+    color: #7f8c8d;
+}
+
+.task-notes {
+    font-size: 14px;
+    color: #7f8c8d;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.task-time-spent {
+    font-size: 13px;
+    color: #27ae60;
+    margin-bottom: 15px;
+}
+
+.task-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.task-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.start-task-btn {
+    background: #27ae60;
+    color: white;
+}
+
+.start-task-btn:hover {
+    background: #219a52;
+}
+
+.start-task-btn.paused {
+    background: #f39c12;
+}
+
+.start-task-btn.paused:hover {
+    background: #d68910;
+}
+
+.complete-task-btn {
+    background: #3498db;
+    color: white;
+}
+
+.complete-task-btn:hover {
+    background: #2980b9;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: white;
+}
+
+.empty-state p {
+    font-size: 18px;
+    opacity: 0.8;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .app-container {
+        flex-direction: column;
+    }
+
+    .left-panel {
+        flex: none;
+        padding: 30px;
+    }
+
+    .right-panel {
+        padding: 30px;
+    }
+}
