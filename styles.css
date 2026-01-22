@@ -4,9 +4,24 @@
     box-sizing: border-box;
 }
 
+/* Font Definitions */
+:root {
+    --font-handwritten: 'Homemade Apple', cursive;
+    --font-elegant: 'Cormorant Garamond', serif;
+    --font-body: 'Quicksand', sans-serif;
+
+    /* Colors */
+    --color-cream: #fffaeb;
+    --color-dusty-blue: #7EA6BB;
+    --color-burnt-orange: #bb4900;
+    --color-dark-text: #2c3e50;
+    --color-muted: #7f8c8d;
+    --color-green: #27ae60;
+}
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: var(--font-body);
+    background: var(--color-dusty-blue);
     min-height: 100vh;
 }
 
@@ -18,7 +33,7 @@ body {
 /* Left Panel - Pomodoro Timer */
 .left-panel {
     flex: 0 0 40%;
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--color-cream);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -43,26 +58,28 @@ body {
 
 .timer-display {
     font-size: 72px;
-    font-weight: bold;
-    color: #2c3e50;
+    font-weight: 600;
+    color: var(--color-dark-text);
     margin-bottom: 10px;
-    font-family: 'Courier New', monospace;
+    font-family: var(--font-body);
 }
 
 .timer-mode {
     font-size: 18px;
-    color: #7f8c8d;
+    color: var(--color-muted);
     margin-bottom: 30px;
     text-transform: uppercase;
     letter-spacing: 2px;
+    font-family: var(--font-body);
+    font-weight: 500;
 }
 
 .timer-mode.work {
-    color: #e74c3c;
+    color: var(--color-burnt-orange);
 }
 
 .timer-mode.rest {
-    color: #27ae60;
+    color: var(--color-green);
 }
 
 .timer-settings {
@@ -78,8 +95,9 @@ body {
 .setting-group label {
     display: block;
     font-size: 14px;
-    color: #7f8c8d;
+    color: var(--color-muted);
     margin-bottom: 8px;
+    font-family: var(--font-body);
 }
 
 .setting-control {
@@ -87,23 +105,25 @@ body {
     align-items: center;
     gap: 10px;
     font-size: 16px;
-    color: #2c3e50;
+    color: var(--color-dark-text);
+    font-family: var(--font-body);
 }
 
 .setting-btn {
     width: 32px;
     height: 32px;
     border: none;
-    background: #e74c3c;
+    background: var(--color-burnt-orange);
     color: white;
     border-radius: 50%;
     cursor: pointer;
     font-size: 18px;
+    font-family: var(--font-body);
     transition: background 0.2s;
 }
 
 .setting-btn:hover {
-    background: #c0392b;
+    background: #9a3c00;
 }
 
 .timer-controls {
@@ -115,48 +135,53 @@ body {
 
 .timer-btn {
     padding: 12px 30px;
-    font-size: 16px;
+    font-size: 18px;
     border: none;
     border-radius: 25px;
     cursor: pointer;
     transition: all 0.2s;
+    font-family: var(--font-elegant);
+    font-weight: 600;
 }
 
 .timer-btn:first-child {
-    background: #e74c3c;
+    background: var(--color-burnt-orange);
     color: white;
 }
 
 .timer-btn:first-child:hover {
-    background: #c0392b;
+    background: #9a3c00;
 }
 
 .timer-btn:last-child {
-    background: #ecf0f1;
-    color: #2c3e50;
+    background: #e8e0d0;
+    color: var(--color-dark-text);
+    font-family: var(--font-elegant);
 }
 
 .timer-btn:last-child:hover {
-    background: #bdc3c7;
+    background: #d9d0be;
 }
 
 .current-task-display {
     padding: 15px;
-    background: #f8f9fa;
+    background: #f5f0e6;
     border-radius: 10px;
-    color: #7f8c8d;
+    color: var(--color-muted);
     font-size: 14px;
+    font-family: var(--font-body);
 }
 
 .current-task-display.active {
     background: #e8f5e9;
-    color: #27ae60;
+    color: var(--color-green);
     font-weight: 500;
 }
 
 /* Right Panel - To-Do List */
 .right-panel {
     flex: 1;
+    background: var(--color-dusty-blue);
     padding: 40px;
     overflow-y: auto;
 }
@@ -170,18 +195,20 @@ body {
 
 .todo-header h2 {
     color: white;
-    font-size: 28px;
+    font-size: 32px;
+    font-family: var(--font-handwritten);
 }
 
 .add-task-btn {
     padding: 12px 24px;
-    font-size: 16px;
-    background: white;
-    color: #667eea;
+    font-size: 18px;
+    background: var(--color-cream);
+    color: var(--color-burnt-orange);
     border: none;
     border-radius: 25px;
     cursor: pointer;
     font-weight: 600;
+    font-family: var(--font-elegant);
     transition: all 0.2s;
 }
 
@@ -218,7 +245,7 @@ body {
 
 .menu-content {
     position: relative;
-    background: white;
+    background: var(--color-cream);
     padding: 40px;
     border-radius: 20px;
     width: 100%;
@@ -229,9 +256,10 @@ body {
 }
 
 .menu-content h3 {
-    color: #2c3e50;
+    color: var(--color-dark-text);
     margin-bottom: 25px;
-    font-size: 24px;
+    font-size: 28px;
+    font-family: var(--font-handwritten);
 }
 
 .form-group {
@@ -240,25 +268,28 @@ body {
 
 .form-group label {
     display: block;
-    color: #2c3e50;
+    color: var(--color-dark-text);
     font-weight: 500;
     margin-bottom: 8px;
+    font-family: var(--font-body);
 }
 
 .form-group input,
 .form-group textarea {
     width: 100%;
     padding: 12px 15px;
-    border: 2px solid #ecf0f1;
+    border: 2px solid #d9d0be;
     border-radius: 10px;
     font-size: 15px;
+    font-family: var(--font-body);
+    background: white;
     transition: border-color 0.2s;
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: var(--color-dusty-blue);
 }
 
 .form-group textarea {
@@ -269,19 +300,20 @@ body {
 .add-to-list-btn {
     width: 100%;
     padding: 15px;
-    font-size: 16px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-size: 20px;
+    background: var(--color-dusty-blue);
     color: white;
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    font-weight: 600;
+    font-family: var(--font-handwritten);
     transition: all 0.2s;
 }
 
 .add-to-list-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 15px rgba(126, 166, 187, 0.4);
+    background: #6b93a8;
 }
 
 /* Task List */
@@ -293,7 +325,7 @@ body {
 
 /* Task Box */
 .task-box {
-    background: white;
+    background: var(--color-cream);
     border-radius: 15px;
     padding: 25px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -307,55 +339,60 @@ body {
 }
 
 .task-box.active {
-    border: 3px solid #27ae60;
-    background: #f8fff8;
+    border: 3px solid var(--color-green);
+    background: #fafff8;
 }
 
 .task-priority-badge {
     position: absolute;
     top: -10px;
     left: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--color-burnt-orange);
     color: white;
     padding: 5px 15px;
     border-radius: 15px;
     font-size: 12px;
     font-weight: 600;
+    font-family: var(--font-body);
 }
 
 .task-name {
-    font-size: 20px;
-    font-weight: 600;
-    color: #2c3e50;
+    font-size: 22px;
+    color: var(--color-dark-text);
     margin-bottom: 10px;
     margin-top: 5px;
+    font-family: var(--font-handwritten);
 }
 
 .task-due-date {
     font-size: 14px;
-    color: #e74c3c;
+    color: var(--color-burnt-orange);
     margin-bottom: 8px;
+    font-family: var(--font-body);
 }
 
 .task-due-date::before {
     content: "Due: ";
-    color: #7f8c8d;
+    color: var(--color-muted);
 }
 
 .task-notes {
     font-size: 14px;
-    color: #7f8c8d;
-    line-height: 1.5;
+    color: var(--color-muted);
+    line-height: 1.6;
     margin-bottom: 20px;
-    padding: 10px;
-    background: #f8f9fa;
+    padding: 12px;
+    background: white;
     border-radius: 8px;
+    border: 1px solid #e8e0d0;
+    font-family: var(--font-body);
 }
 
 .task-time-spent {
     font-size: 13px;
-    color: #27ae60;
+    color: var(--color-green);
     margin-bottom: 15px;
+    font-family: var(--font-body);
 }
 
 .task-actions {
@@ -366,16 +403,17 @@ body {
 
 .task-btn {
     padding: 10px 20px;
-    font-size: 14px;
+    font-size: 16px;
     border: none;
     border-radius: 20px;
     cursor: pointer;
     font-weight: 500;
     transition: all 0.2s;
+    font-family: var(--font-elegant);
 }
 
 .start-task-btn {
-    background: #27ae60;
+    background: var(--color-green);
     color: white;
 }
 
@@ -384,20 +422,20 @@ body {
 }
 
 .start-task-btn.paused {
-    background: #f39c12;
+    background: #d4a03c;
 }
 
 .start-task-btn.paused:hover {
-    background: #d68910;
+    background: #c49232;
 }
 
 .complete-task-btn {
-    background: #3498db;
+    background: var(--color-dusty-blue);
     color: white;
 }
 
 .complete-task-btn:hover {
-    background: #2980b9;
+    background: #6b93a8;
 }
 
 /* Empty State */
@@ -409,7 +447,8 @@ body {
 
 .empty-state p {
     font-size: 18px;
-    opacity: 0.8;
+    opacity: 0.9;
+    font-family: var(--font-body);
 }
 
 /* Responsive */
@@ -425,5 +464,17 @@ body {
 
     .right-panel {
         padding: 30px;
+    }
+
+    .todo-header h2 {
+        font-size: 26px;
+    }
+
+    .menu-content h3 {
+        font-size: 24px;
+    }
+
+    .task-name {
+        font-size: 18px;
     }
 }
