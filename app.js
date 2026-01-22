@@ -10,6 +10,7 @@ let timerState = {
 
 // Task Management State
 let tasks = [];
+let completedTasks = [];
 let activeTaskId = null;
 
 // ==================== TIMER FUNCTIONS ====================
@@ -314,8 +315,18 @@ function completeTask(taskId) {
         updateCurrentTaskDisplay();
     }
 
-    // Remove task from list
-    tasks = tasks.filter(t => t.id !== taskId);
+    // Find the task
+    const taskIndex = tasks.findIndex(t => t.id === taskId);
+    if (taskIndex === -1) return;
+
+    const task = tasks[taskIndex];
+
+    // Add completion timestamp and move to completed tasks
+    task.completedAt = Date.now();
+    completedTasks.unshift(task); // Add to beginning (newest first)
+
+    // Remove task from active list
+    tasks.splice(taskIndex, 1);
 
     // Re-render the list
     renderTaskList();
@@ -337,10 +348,66 @@ function updateCurrentTaskDisplay() {
     }
 }
 
+// ==================== COMPLETED TASKS ====================
+
+function openCompletedTasks() {
+    renderCompletedTasksList();
+    document.getElementById('completed-tasks-modal').classList.add('open');
+}
+
+function closeCompletedTasks() {
+    document.getElementById('completed-tasks-modal').classList.remove('open');
+}
+
+function renderCompletedTasksList() {
+    const listElement = document.getElementById('completed-tasks-list');
+
+    if (completedTasks.length === 0) {
+        listElement.innerHTML = `
+            <div class="completed-empty-state">
+                <p>No completed tasks yet. Keep growing!</p>
+            </div>
+        `;
+        return;
+    }
+
+    listElement.innerHTML = completedTasks.map(task => createCompletedTaskHTML(task)).join('');
+}
+
+function createCompletedTaskHTML(task) {
+    const timeSpentDisplay = formatTimeSpent(task.timeSpent);
+    const completedDate = formatCompletedDate(task.completedAt);
+
+    return `
+        <div class="completed-task-item">
+            <div class="completed-task-name">${escapeHTML(task.name)}</div>
+            <div class="completed-task-details">
+                <span class="completed-task-time">Time spent: ${timeSpentDisplay}</span>
+                <span class="completed-task-date">Completed: ${completedDate}</span>
+                ${task.dueDate ? `<span>Due: ${escapeHTML(task.dueDate)}</span>` : ''}
+            </div>
+        </div>
+    `;
+}
+
+function formatCompletedDate(timestamp) {
+    const date = new Date(timestamp);
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const displayHours = hours % 12 || 12;
+
+    return `${month}/${day}/${year} at ${displayHours}:${minutes} ${ampm}`;
+}
+
 // ==================== LOCAL STORAGE ====================
 
 function saveTasks() {
     localStorage.setItem('pomodoro-tasks', JSON.stringify(tasks));
+    localStorage.setItem('pomodoro-completed-tasks', JSON.stringify(completedTasks));
     localStorage.setItem('pomodoro-active-task', activeTaskId);
 }
 
@@ -349,6 +416,11 @@ function loadTasks() {
     if (savedTasks) {
         tasks = JSON.parse(savedTasks);
         sortTasksByPriority();
+    }
+
+    const savedCompletedTasks = localStorage.getItem('pomodoro-completed-tasks');
+    if (savedCompletedTasks) {
+        completedTasks = JSON.parse(savedCompletedTasks);
     }
 
     const savedActiveTask = localStorage.getItem('pomodoro-active-task');
