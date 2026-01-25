@@ -5,7 +5,10 @@ let timerState = {
     currentTime: 25 * 60, // in seconds
     isRunning: false,
     isWorkMode: true,
-    intervalId: null
+    intervalId: null,
+    startTimestamp: null,  // When timer started
+    endTimestamp: null,    // When timer should end
+    lastTickTimestamp: null // For tracking task time
 };
 
 // Task Management State
@@ -54,26 +57,39 @@ function startTimer() {
     timerState.isRunning = true;
     document.getElementById('timer-start-btn').textContent = 'Pause';
 
-    timerState.intervalId = setInterval(() => {
-        timerState.currentTime--;
+    // Set timestamps for accurate background tracking
+    const now = Date.now();
+    timerState.startTimestamp = now;
+    timerState.endTimestamp = now + (timerState.currentTime * 1000);
+    timerState.lastTickTimestamp = now;
 
-        // Track time for active task
-        if (activeTaskId !== null) {
+    timerState.intervalId = setInterval(() => {
+        const now = Date.now();
+        const remainingMs = timerState.endTimestamp - now;
+        const elapsedSinceLastTick = Math.floor((now - timerState.lastTickTimestamp) / 1000);
+
+        // Track time for active task (based on actual elapsed time)
+        if (activeTaskId !== null && elapsedSinceLastTick > 0) {
             const task = tasks.find(t => t.id === activeTaskId);
             if (task && timerState.isWorkMode) {
-                task.timeSpent++;
+                task.timeSpent += elapsedSinceLastTick;
                 updateTaskDisplay(task);
+                saveTasks();
             }
         }
+        timerState.lastTickTimestamp = now;
 
-        updateTimerDisplay();
-
-        if (timerState.currentTime <= 0) {
+        if (remainingMs <= 0) {
             // Timer completed
+            timerState.currentTime = 0;
+            updateTimerDisplay();
             playNotificationSound();
             switchTimerMode();
+        } else {
+            timerState.currentTime = Math.ceil(remainingMs / 1000);
+            updateTimerDisplay();
         }
-    }, 1000);
+    }, 250); // Check more frequently for better accuracy
 }
 
 function pauseTimer() {
@@ -84,6 +100,16 @@ function pauseTimer() {
         clearInterval(timerState.intervalId);
         timerState.intervalId = null;
     }
+
+    // Save remaining time accurately when pausing
+    if (timerState.endTimestamp) {
+        const remainingMs = timerState.endTimestamp - Date.now();
+        timerState.currentTime = Math.max(0, Math.ceil(remainingMs / 1000));
+    }
+
+    timerState.startTimestamp = null;
+    timerState.endTimestamp = null;
+    timerState.lastTickTimestamp = null;
 }
 
 function resetTimer() {
