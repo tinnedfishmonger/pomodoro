@@ -16,6 +16,63 @@ let tasks = [];
 let completedTasks = [];
 let activeTaskId = null;
 
+// Web Worker for reliable background ticking
+let timerWorker = null;
+
+function createTimerWorker() {
+    const workerCode = `
+        let intervalId = null;
+        self.onmessage = function(e) {
+            if (e.data === 'start') {
+                if (intervalId) clearInterval(intervalId);
+                intervalId = setInterval(function() {
+                    self.postMessage('tick');
+                }, 250);
+            } else if (e.data === 'stop') {
+                if (intervalId) {
+                    clearInterval(intervalId);
+                    intervalId = null;
+                }
+            }
+        };
+    `;
+    const blob = new Blob([workerCode], { type: 'application/javascript' });
+    const worker = new Worker(URL.createObjectURL(blob));
+    worker.onmessage = function(e) {
+        if (e.data === 'tick' && timerState.isRunning) {
+            timerTick();
+        }
+    };
+    return worker;
+}
+
+function timerTick() {
+    const now = Date.now();
+    const remainingMs = timerState.endTimestamp - now;
+    const elapsedSinceLastTick = Math.floor((now - timerState.lastTickTimestamp) / 1000);
+
+    // Track time for active task (based on actual elapsed time)
+    if (activeTaskId !== null && elapsedSinceLastTick > 0) {
+        const task = tasks.find(t => t.id === activeTaskId);
+        if (task && timerState.isWorkMode) {
+            task.timeSpent += elapsedSinceLastTick;
+            updateTaskDisplay(task);
+            saveTasks();
+        }
+    }
+    timerState.lastTickTimestamp = now;
+
+    if (remainingMs <= 0) {
+        timerState.currentTime = 0;
+        updateTimerDisplay();
+        playNotificationSound();
+        switchTimerMode();
+    } else {
+        timerState.currentTime = Math.ceil(remainingMs / 1000);
+        updateTimerDisplay();
+    }
+}
+
 // ==================== TIMER FUNCTIONS ====================
 
 function adjustTime(type, change) {
@@ -63,42 +120,20 @@ function startTimer() {
     timerState.endTimestamp = now + (timerState.currentTime * 1000);
     timerState.lastTickTimestamp = now;
 
-    timerState.intervalId = setInterval(() => {
-        const now = Date.now();
-        const remainingMs = timerState.endTimestamp - now;
-        const elapsedSinceLastTick = Math.floor((now - timerState.lastTickTimestamp) / 1000);
-
-        // Track time for active task (based on actual elapsed time)
-        if (activeTaskId !== null && elapsedSinceLastTick > 0) {
-            const task = tasks.find(t => t.id === activeTaskId);
-            if (task && timerState.isWorkMode) {
-                task.timeSpent += elapsedSinceLastTick;
-                updateTaskDisplay(task);
-                saveTasks();
-            }
-        }
-        timerState.lastTickTimestamp = now;
-
-        if (remainingMs <= 0) {
-            // Timer completed
-            timerState.currentTime = 0;
-            updateTimerDisplay();
-            playNotificationSound();
-            switchTimerMode();
-        } else {
-            timerState.currentTime = Math.ceil(remainingMs / 1000);
-            updateTimerDisplay();
-        }
-    }, 250); // Check more frequently for better accuracy
+    // Use Web Worker for reliable background ticking
+    if (!timerWorker) {
+        timerWorker = createTimerWorker();
+    }
+    timerWorker.postMessage('start');
 }
 
 function pauseTimer() {
     timerState.isRunning = false;
     document.getElementById('timer-start-btn').textContent = 'Start';
 
-    if (timerState.intervalId) {
-        clearInterval(timerState.intervalId);
-        timerState.intervalId = null;
+    // Stop the Web Worker ticking
+    if (timerWorker) {
+        timerWorker.postMessage('stop');
     }
 
     // Save remaining time accurately when pausing
@@ -429,6 +464,42 @@ function formatCompletedDate(timestamp) {
     return `${month}/${day}/${year} at ${displayHours}:${minutes} ${ampm}`;
 }
 
+// ==================== EXPORT FUNCTIONS ====================
+
+function exportCompletedTasks() {
+    if (completedTasks.length === 0) {
+        alert('No completed tasks to export.');
+        return;
+    }
+
+    // Build data rows with headers
+    const data = [
+        ['Task Name', 'Date Completed', 'Time to Complete']
+    ];
+
+    completedTasks.forEach(task => {
+        data.push([
+            task.name,
+            formatCompletedDate(task.completedAt),
+            formatTimeSpent(task.timeSpent)
+        ]);
+    });
+
+    // Create workbook and worksheet
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(data);
+
+    // Set column widths
+    ws['!cols'] = [
+        { wch: 30 }, // Task Name
+        { wch: 25 }, // Date Completed
+        { wch: 20 }  // Time to Complete
+    ];
+
+    XLSX.utils.book_append_sheet(wb, ws, 'Completed Tasks');
+    XLSX.writeFile(wb, 'completed_tasks.xlsx');
+}
+
 // ==================== LOCAL STORAGE ====================
 
 function saveTasks() {
@@ -471,6 +542,20 @@ function init() {
     // Initialize timer display values
     document.getElementById('work-time-display').textContent = timerState.workTime;
     document.getElementById('rest-time-display').textContent = timerState.restTime;
+
+    // Catch up when tab becomes visible again (safety net)
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden && timerState.isRunning) {
+            timerTick();
+        }
+    });
+
+    // Also catch up when window regains focus
+    window.addEventListener('focus', function() {
+        if (timerState.isRunning) {
+            timerTick();
+        }
+    });
 }
 
 // Run initialization when DOM is loaded
