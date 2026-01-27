@@ -429,6 +429,42 @@ function formatCompletedDate(timestamp) {
     return `${month}/${day}/${year} at ${displayHours}:${minutes} ${ampm}`;
 }
 
+// ==================== EXPORT FUNCTIONS ====================
+
+function exportCompletedTasks() {
+    if (completedTasks.length === 0) {
+        alert('No completed tasks to export.');
+        return;
+    }
+
+    // Build data rows with headers
+    const data = [
+        ['Task Name', 'Date Completed', 'Time to Complete']
+    ];
+
+    completedTasks.forEach(task => {
+        data.push([
+            task.name,
+            formatCompletedDate(task.completedAt),
+            formatTimeSpent(task.timeSpent)
+        ]);
+    });
+
+    // Create workbook and worksheet
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(data);
+
+    // Set column widths
+    ws['!cols'] = [
+        { wch: 30 }, // Task Name
+        { wch: 25 }, // Date Completed
+        { wch: 20 }  // Time to Complete
+    ];
+
+    XLSX.utils.book_append_sheet(wb, ws, 'Completed Tasks');
+    XLSX.writeFile(wb, 'completed_tasks.xlsx');
+}
+
 // ==================== LOCAL STORAGE ====================
 
 function saveTasks() {
